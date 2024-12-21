@@ -4,39 +4,54 @@ import java.util.*;
 
 class Solution {
     public int minReorder(int n, int[][] connections) {
-        Set<Integer> currentAllowedConnection = new HashSet<>();
-        currentAllowedConnection.add(0);
-
-        List<Integer> res = new ArrayList<>();
-
-        dfs(currentAllowedConnection, connections, res, new HashSet<>());
-
-        return res.size();
+        Set<Integer> visitedNodes = new HashSet<>();
+        Map<Integer, List<Integer>> originalDirection = new HashMap<>();
+        Map<Integer, List<Integer>> reverseDirection = new HashMap<>();
+        fillHashMaps(connections, originalDirection, reverseDirection);
+        return countDFS(visitedNodes, originalDirection, reverseDirection, 0);
 
     }
 
-    private void dfs(Set<Integer> currentAllowedConnections, int[][] connections, List<Integer> res, Set<Integer> reorderedSet) {
-        while (reorderedSet.size() != connections.length) {
-            for (int i = 0; i < connections.length; i++) {
-                if (reorderedSet.contains(i)) {
-                    continue;
-                }
-                if (currentAllowedConnections.contains(connections[i][1]) || currentAllowedConnections.contains(connections[i][0])) {
-                    if (!currentAllowedConnections.contains(connections[i][1])) {
-                        //int temp = connections[i][1];
-                        //connections[i][1] = connections[i][0];
-                        //connections[i][0] = temp;
-                        res.add(1);
-                        reorderedSet.add(i);
-                        currentAllowedConnections.add(connections[i][1]);
+    private void fillHashMaps(int[][] connections, Map<Integer, List<Integer>> originalDirection, Map<Integer, List<Integer>> reverseDirection) {
+        for (int[] connection : connections) {
+            originalDirection.putIfAbsent(connection[1], new ArrayList<>());
+            reverseDirection.putIfAbsent(connection[0], new ArrayList<>());
+        }
 
-                    } else {
-                        currentAllowedConnections.add(connections[i][0]);
-                        reorderedSet.add(i);
-                    }
+        for (int[] connection : connections) {
+            reverseDirection.get(connection[0]).add(connection[1]);
+            originalDirection.get(connection[1]).add(connection[0]);
+        }
+    }
 
+    private int countDFS(Set<Integer> visitedNodes, Map<Integer, List<Integer>> originalDirection, Map<Integer, List<Integer>> reverseDirection, int find) {
+        int sum = 0;
+        visitedNodes.add(find);
+        List<Integer> directed = originalDirection.get(find);
+        if (directed != null && !directed.isEmpty()) {
+            for (Integer i : directed) {
+                if (!visitedNodes.contains(i)) {
+                    sum += countDFS(visitedNodes, originalDirection, reverseDirection, i);
                 }
             }
         }
+        List<Integer> reversed = reverseDirection.get(find);
+
+        if (reversed != null && !reversed.isEmpty()) {
+            for (Integer i : reversed) {
+                if (!visitedNodes.contains(i)) {
+                    sum += 1 + countDFS(visitedNodes, originalDirection, reverseDirection, i);
+                }
+            }
+        }
+        return sum;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.minReorder(3, new int[][]{
+                {1, 0},
+                {2, 0}
+        }));
     }
 }
