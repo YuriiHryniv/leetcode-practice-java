@@ -6,57 +6,51 @@ import java.util.Stack;
 
 class Solution {
     public boolean canBeValid(String s, String locked) {
-        if (s.length() % 2 == 1) return false;
+        int length = s.length();
 
-        int leftLow = 0;
-        int leftHigh = 0;
-
-        for (int i = 0; i < s.length(); i++) {
-            if (locked.charAt(i) == '1') {
-                if (s.charAt(i) == '(') {
-                    leftLow++;
-                    leftHigh++;
-                } else {
-                    leftLow--;
-                    leftHigh--;
-                }
-            } else {
-                leftHigh++;
-                leftLow--;
-            }
-
-            if (leftLow < 0) leftLow = 0;
+        if (length % 2 == 1) {
+            return false;
         }
 
-        if (leftHigh < 0) return false;
-        int rightLow = 0;
-        int rightHigh = 0;
+        Stack<Integer> openBrackets = new Stack<>();
+        Stack<Integer> unlocked = new Stack<>();
 
-        for (int i = s.length() - 1; i >= 0; i--) {
-            if (locked.charAt(i) == '1') {
-                if (s.charAt(i) == ')') {
-                    rightLow++;
-                    rightHigh++;
+        for (int i = 0; i < length; i++) {
+            if (locked.charAt(i) == '0') {
+                unlocked.push(i);
+            } else if (s.charAt(i) == '(') {
+                openBrackets.push(i);
+            } else if (s.charAt(i) == ')') {
+                if (!openBrackets.empty()) {
+                    openBrackets.pop();
+                } else if (!unlocked.empty()) {
+                    unlocked.pop();
                 } else {
-                    rightLow--;
-                    rightHigh--;
+                    return false;
                 }
-            } else {
-                rightLow--;
-                rightHigh++;
             }
-            if (rightLow < 0) rightLow = 0;
         }
 
-        if (rightHigh < 0) return false;
+        while (
+                !openBrackets.empty() &&
+                        !unlocked.empty() &&
+                        openBrackets.peek() < unlocked.peek()
+        ) {
+            openBrackets.pop();
+            unlocked.pop();
+        }
 
-        return rightLow == 0 && leftLow == 0;
+        if (!openBrackets.empty()) {
+            return false;
+        }
+
+        return true;
     }
 
 
     public static void main(String[] args) {
         Solution solution = new Solution();
-        System.out.println(solution.canBeValid("())(()(()(())()())(())((())(()())((())))))(((((((())(()))))(", "100011110110011011010111100111011101111110000101001101001111"));
+        System.out.println(solution.canBeValid("))()))", "010100"));
 
     }
 }
