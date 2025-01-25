@@ -4,41 +4,35 @@ import java.util.*;
 
 class Solution {
     public int countServers(int[][] grid) {
-        Map<Integer, List<Integer>> rows = new HashMap<>();
-        Map<Integer, List<Integer>> cols = new HashMap<>();
-
-
-        for (int i = 0; i < grid.length; i++) {
-
-            List<Integer> row = new ArrayList<>();
-            for (int j = 0; j < grid[0].length; j++) {
-                if (grid[i][j] == 1)row.add(grid[i][j]);
-            }
-            rows.put(i, row);
+        if (grid == null || grid.length == 0) {
+            return 0;
         }
 
-        for (int i = 0; i < grid[0].length; i++) {
-            List<Integer> col = new ArrayList<>();
+        int[] rowCounts = new int[grid[0].length];
+        int[] colCounts = new int[grid.length];
 
-            for (int j = 0; j < grid.length; j++) {
-                if (grid[j][i] == 1) col.add(grid[j][i]);
-            }
-            cols.put(i, col);
-        }
-
-
-        int res = 0;
-
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++) {
-                List<Integer> row = rows.get(i);
-                List<Integer> col = cols.get(j);
-                if (grid[i][j] == 1 && (row.size() >= 2 || col.size() >= 2)) res++;
+        for (int row = 0; row < grid.length; row++) {
+            for (int col = 0; col < grid[0].length; col++) {
+                if (grid[row][col] == 1) {
+                    rowCounts[col]++;
+                    colCounts[row]++;
+                }
             }
         }
 
+        int communicableServersCount = 0;
 
-        return res;
+        for (int row = 0; row < grid.length; row++) {
+            for (int col = 0; col < grid[0].length; col++) {
+                if (grid[row][col] == 1) {
+                    if (rowCounts[col] > 1 || colCounts[row] > 1) {
+                        communicableServersCount++;
+                    }
+                }
+            }
+        }
+
+        return communicableServersCount;
     }
 
     public static void main(String[] args) {
