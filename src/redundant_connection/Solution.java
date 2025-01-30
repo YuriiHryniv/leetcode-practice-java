@@ -1,9 +1,6 @@
 package redundant_connection;
 
-import java.awt.image.AreaAveragingScaleFilter;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 class Solution {
 
@@ -22,7 +19,7 @@ class Solution {
 
         public int find(int x) {
             if (parent[x] != x) {
-                parent[x] = find(parent[x]); // path compression
+                parent[x] = find(parent[x]);
             }
             return parent[x];
         }
@@ -46,41 +43,37 @@ class Solution {
 
     public int[] findRedundantConnection(int[][] edges) {
 
-        List<int[]> arr = new ArrayList<>(Arrays.asList(edges));
+        UnionFind uf = new UnionFind(edges.length + 1);
 
-        for (int i = 0; i < edges.length; i++) {
-            UnionFind uf = new UnionFind(edges.length + 1);
-            List<int[]> firstList = new ArrayList<>(arr.subList(0, i));
-            List<int[]> secondList = new ArrayList<>(arr.subList(i + 1, edges.length));
-
-            firstList.addAll(secondList);
-
-            for (int[] ints : firstList) {
-                uf.union(ints[0], ints[1]);
+        for (int[] edge : edges) {
+            if (uf.find(edge[0]) == uf.find(edge[1])) {
+                return edge;
+            } else {
+                uf.union(edge[0], edge[1]);
             }
-
-            boolean isCycled = false;
-            List<Integer> res = new ArrayList<>();
-
-            for (int k = 0; k < firstList.size(); k++) {
-                res.add(uf.find(k));
-            }
-
-
-
         }
 
-        return null;
+        return edges[edges.length - 1];
     }
 
 
 
     public static void main(String[] args) {
         Solution solution = new Solution();
+        int[][] arr = {
+                {1, 2},
+                {2, 3},
+                {3, 4},
+                {1, 4},
+                {1, 5}
+        };
+        int[][] arr1 = {
+                {1, 2},
+                {1, 3},
+                {2, 3}
+        };
 
-        int[][] edges = {{0, 1}, {1, 3}, {2, 3}};
 
-
-        System.out.println(Arrays.toString(solution.findRedundantConnection(edges)));
+        System.out.println(Arrays.toString(solution.findRedundantConnection(arr)));
     }
 }
