@@ -57,26 +57,27 @@ class Solution {
     }
 
     private int getIslandConnectSum(int i, int j, int[][] islandIdArr, Map<Integer, Integer> indexMap) {
+        Set<Integer> addedIndexes = new HashSet<>();
         int upperRes = 0;
         int leftRes = 0;
         int rightRes = 0;
         int lowerRes = 0;
 
-        if (i + 1 <= islandIdArr.length - 1 && islandIdArr[i + 1][j] != 0) {
+        if (i + 1 <= islandIdArr.length - 1 && islandIdArr[i + 1][j] != 0 && !addedIndexes.contains(islandIdArr[i + 1][j])) {
             lowerRes += indexMap.getOrDefault(islandIdArr[i + 1][j], 0);
-            indexMap.remove(islandIdArr[i + 1][j]);
+            addedIndexes.add(islandIdArr[i + 1][j]);
         }
-        if (i - 1 >= 0 && islandIdArr[i - 1][j] != 0) {
+        if (i - 1 >= 0 && islandIdArr[i - 1][j] != 0 && !addedIndexes.contains(islandIdArr[i - 1][j])) {
             upperRes += indexMap.getOrDefault(islandIdArr[i - 1][j], 0);
-            indexMap.remove(islandIdArr[i - 1][j]);
+            addedIndexes.add(islandIdArr[i - 1][j]);
         }
-        if (j + 1 <= islandIdArr[0].length - 1 && islandIdArr[i][j + 1] != 0) {
+        if (j + 1 <= islandIdArr[0].length - 1 && islandIdArr[i][j + 1] != 0 && !addedIndexes.contains(islandIdArr[i][j + 1])) {
             rightRes += indexMap.getOrDefault(islandIdArr[i][j + 1], 0);
-            indexMap.remove(islandIdArr[i][j + 1]);
+            addedIndexes.add(islandIdArr[i][j + 1]);
         }
-        if (j - 1 >= 0 && islandIdArr[i][j - 1] != 0) {
+        if (j - 1 >= 0 && islandIdArr[i][j - 1] != 0 && !addedIndexes.contains(islandIdArr[i][j - 1])) {
             leftRes += indexMap.getOrDefault(islandIdArr[i][j - 1], 0);
-            indexMap.remove(islandIdArr[i][j - 1]);
+            addedIndexes.add(islandIdArr[i][j - 1]);
         }
 
         return upperRes + leftRes + rightRes + lowerRes + 1;
@@ -85,11 +86,34 @@ class Solution {
     public static void main(String[] args) {
         Solution solution = new Solution();
 
-        int[][] grid = {
+        int[][] grid1 = {
+                {1, 0},
+                {0, 1}
+        };
+
+        // Grid 2: [[1,1],[1,0]]
+        int[][] grid2 = {
                 {1, 1},
                 {1, 0}
         };
 
-        System.out.println(solution.largestIsland(grid));
+        // Grid 3: [[1,1],[1,1]]
+        int[][] grid3 = {
+                {1, 1},
+                {1, 1}
+        };
+
+
+        int[][] array = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 1, 0, 0},
+                {0, 1, 0, 0, 1, 0, 0},
+                {1, 0, 1, 0, 1, 0, 0},
+                {0, 1, 0, 0, 1, 0, 0},
+                {0, 1, 0, 0, 1, 0, 0},
+                {0, 1, 1, 1, 1, 0, 0}
+        };
+
+        System.out.println(solution.largestIsland(array));
     }
 }
