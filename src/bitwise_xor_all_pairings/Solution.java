@@ -33,8 +33,8 @@ class Solution {
 
 
     public static void main(String[] args) {
-        Solution solution = new Solution();
-        System.out.println(solution.xorAllNums(new int[] {25,29,3,10,0,15,2}, new int[] {12}));
+        Integer i = 2_147_483_647;
+        System.out.println(i + 1);
 
     }
 }
