@@ -4,17 +4,13 @@ package remove_occurences;
 class Solution {
 
     public String removeOccurrences(String s, String part) {
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < s.length(); i++) {
-            String element = String.valueOf(s.charAt(i));
-            sb.append(element);
-            if (sb.toString().endsWith(part)) {
-                sb.delete(sb.length() - part.length(), sb.length());
-            }
+        while (s.contains(part)) {
+            int partStartIndex = s.indexOf(part);
+            s =
+                    s.substring(0, partStartIndex) +
+                            s.substring(partStartIndex + part.length());
         }
-
-        return sb.toString();
+        return s;
     }
 
     public static void main(String[] args) {
