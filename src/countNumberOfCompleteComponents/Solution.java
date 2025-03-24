@@ -4,66 +4,59 @@ import java.util.*;
 
 class Solution {
     public int countCompleteComponents(int n, int[][] edges) {
-        boolean[] visited = new boolean[n];
-        int completeComponents = 0;
+        // Adjacency lists for each vertex
+        List<Integer>[] graph = new ArrayList[n];
+        // Map to store frequency of each unique adjacency list
+        Map<List<Integer>, Integer> componentFreq = new HashMap<>();
 
-        Map<Integer, List<Integer>> edgeMap = new HashMap<>();
-
-        for (int i = 0; i < n; i++) {
-            edgeMap.put(i, new ArrayList<>());
+        // Initialize adjacency lists with self-loops
+        for (int vertex = 0; vertex < n; vertex++) {
+            graph[vertex] = new ArrayList<>();
+            graph[vertex].add(vertex);
         }
 
-        for (int[] edge: edges) {
-            edgeMap.get(edge[1]).add(edge[0]);
-            edgeMap.get(edge[0]).add(edge[1]);
-
+        // Build adjacency lists from edges
+        for (int[] edge : edges) {
+            graph[edge[0]].add(edge[1]);
+            graph[edge[1]].add(edge[0]);
         }
 
-        for (int i = 0; i < n; i++) {
-            if (!visited[i]) {
-                Queue<Integer> queue = new LinkedList<>();
-                List<Integer> componentNodes = new ArrayList<>();
-                int nodes = 0;
-                int localEdges = 0;
+        // Count frequency of each unique adjacency pattern
+        for (int vertex = 0; vertex < n; vertex++) {
+            List<Integer> neighbors = graph[vertex];
+            Collections.sort(neighbors);
+            componentFreq.put(
+                    neighbors,
+                    componentFreq.getOrDefault(neighbors, 0) + 1
+            );
+        }
 
-                queue.offer(i);
-
-                while (!queue.isEmpty()) {
-                    int currentNode = queue.poll();
-                    if (!visited[currentNode]) {
-                        componentNodes.add(currentNode);
-                        nodes++;
-
-                        visited[currentNode] = true;
-                        List<Integer> currentEdgesLeft = edgeMap.get(currentNode);
-                        for (Integer node : currentEdgesLeft) {
-                            queue.offer(node);
-                        }
-                    }
-                }
-                int edgesInThisComponent = 0;
-                for (Integer node: componentNodes) {
-                    edgesInThisComponent += edgeMap.get(node).size();
-                }
-                int edgesNeeded = nodes * (nodes - 1) / 2;
-                if (edgesInThisComponent  / 2== edgesNeeded) completeComponents++;
+        // Count complete components where size equals frequency
+        int completeCount = 0;
+        for (Map.Entry<
+                List<Integer>,
+                Integer
+                > entry : componentFreq.entrySet()) {
+            if (entry.getKey().size() == entry.getValue()) {
+                completeCount++;
             }
         }
-        return completeComponents;
+
+        return completeCount;
     }
 
     public static void main(String[] args) {
         Solution solution = new Solution();
-        /*int[][] edges = {
+        int[][] edges = {
                 {0, 1},
                 {0, 2},
                 {1, 2},
                 {3, 4}
-        };;*/
-        int[][] edges = {
+        };
+        /*int[][] edges = {
                 {1, 0},
                 {2, 1}
-        };;
-        System.out.println(solution.countCompleteComponents(3, edges));
+        };*/
+        System.out.println(solution.countCompleteComponents(6, edges));
     }
 }
