@@ -14,34 +14,16 @@ class Solution {
 
         Arrays.sort(arr);
 
-        if (arr.length % 2 == 0) {
-            int leftMedianNumber = arr[arr.length / 2 - 1];
-            int rightMedianNumber = arr[arr.length / 2];
-            int leftOperations = 0;
-            int rightOperations = 0;
 
-            for (int k : arr) {
-                int abs = Math.abs(k - leftMedianNumber);
-                if (abs % x != 0) return -1;
-                leftOperations += abs / x;
-            }
-            for (int j : arr) {
-                int abs = Math.abs(j - rightMedianNumber);
-                if (abs % x != 0) return -1;
-                rightOperations += abs / x;
-            }
-            return Math.max(leftOperations, rightOperations);
-
-        } else {
-            int medianNumber = arr[arr.length / 2];
-            int operations = 0;
-            for (int k : arr) {
-                int abs = Math.abs(k - medianNumber);
-                if (abs % x != 0) return -1;
-                operations += abs / x;
-            }
-            return operations;
+        int medianNumber = arr[arr.length / 2];
+        int operations = 0;
+        for (int k : arr) {
+            int abs = Math.abs(k - medianNumber);
+            if (abs % x != 0) return -1;
+            operations += abs / x;
         }
+        return operations;
+
     }
 
 
